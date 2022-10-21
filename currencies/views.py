@@ -4,9 +4,8 @@ from .models import Currency
 from django.shortcuts import render
 
 
-def index(request):
-    currencies = Currency.objects.all()
-    currency_id = currencies[33].id
+def show_currency(request):
+    currency_id = int(request.GET['id'])
 
     info_about_currency = {}
 
@@ -17,4 +16,9 @@ def index(request):
             if j == currency_id - 1:
                 info_about_currency[i] = data_dict[i][currency_id - 1]
 
-    return render(request, 'index.html', {'info': info_about_currency})
+    return render(request, 'show_currency.html', {'info': info_about_currency})
+
+
+def select_currency(request):
+    currencies = Currency.objects.all()
+    return render(request, 'select_currency.html', {'currencies': currencies})
