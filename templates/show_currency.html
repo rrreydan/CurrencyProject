@@ -5,18 +5,10 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Index</title>
+    <title>Currencies</title>
 </head>
 <body>
-    {% for key, value in info.items %}
-
-        <p>{{ key }} - {{ value }}</p>
-
-    {% endfor %}
-
-    <hr>
-
-    <form action='{% url 'show_currency'%}' method="get">
+    <form action='{% url 'show_currency'%}' method="get" style="text-align: center">
         <label for="currency">Выберете валюту</label>
         <select id="currency" name="id">
             {% for currency in currencies %}
@@ -24,7 +16,54 @@
             {% endfor %}
         </select>
 
+        <label for="all_checkbox">Показать все валюты</label>
+        <input type="checkbox" name="is_all" id="all_checkbox">
+
         <input type="submit" value="Выбрать">
     </form>
+
+    <hr>
+
+    {% if info_all %}
+        <table style="margin-left: auto; margin-right: auto; width: 60%;" rules="all">
+            <tr>
+                <td>Цифр. код</td>
+                <td>Букв. код</td>
+                <td>Единиц</td>
+                <td>Валюта</td>
+                <td>Курс</td>
+            </tr>
+
+            {% for currency in info_all %}
+                <tr>
+                    {% for value in currency.values %}
+
+                        <td>{{ value }}</td>
+
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+
+        <table style="margin-left: auto; margin-right: auto; width: 60%" rules="all">
+            <tr>
+                <td>Цифр. код</td>
+                <td>Букв. код</td>
+                <td>Единиц</td>
+                <td>Валюта</td>
+                <td>Курс</td>
+            </tr>
+
+            <tr>
+                {% for value in info.values %}
+
+                    <td>{{ value }}</td>
+
+                {% endfor %}
+            </tr>
+        </table>
+
+    {% endif %}
 </body>
 </html>
