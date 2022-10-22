@@ -5,7 +5,8 @@ from django.shortcuts import render
 
 
 def show_currency(request):
-    currency_id = int(request.GET['id'])
+    currencies = Currency.objects.all()
+    currency_id = int(request.GET.get('id', default=1))
 
     info_about_currency = {}
 
@@ -16,9 +17,4 @@ def show_currency(request):
             if j == currency_id - 1:
                 info_about_currency[i] = data_dict[i][currency_id - 1]
 
-    return render(request, 'show_currency.html', {'info': info_about_currency})
-
-
-def select_currency(request):
-    currencies = Currency.objects.all()
-    return render(request, 'select_currency.html', {'currencies': currencies})
+    return render(request, 'show_currency.html', {'info': info_about_currency, 'currencies': currencies})

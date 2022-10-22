@@ -13,5 +13,18 @@
         <p>{{ key }} - {{ value }}</p>
 
     {% endfor %}
+
+    <hr>
+
+    <form action='{% url 'show_currency'%}' method="get">
+        <label for="currency">Выберете валюту</label>
+        <select id="currency" name="id">
+            {% for currency in currencies %}
+                <option value="{{ currency.id }}">{{ currency.name }}</option>
+            {% endfor %}
+        </select>
+
+        <input type="submit" value="Выбрать">
+    </form>
 </body>
 </html>
