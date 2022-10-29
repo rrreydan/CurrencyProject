@@ -23,11 +23,18 @@ def show_currency(request):
 
         return render(request, 'show_currency.html', {'info_all': list_of_currencies, 'currencies': currencies})
     else:
-        currency_id = int(request.GET.get('id', default=1))
-        info_about_currency = {}
+        currency_id = {}
+        currency_id.update(request.GET)  # getting all transmitted ids
+        list_of_currencies = []
         data_dict = service.get_dict_of_currencies()
 
-        for i in data_dict:
-            info_about_currency.update({i : data_dict.get(i).get(currency_id - 1)})
+        # going through the entire list with ids
+        for cur_id in [int(i) for i in currency_id.get('id')]:
+            info_about_currency = {}
 
-        return render(request, 'show_currency.html', {'info': info_about_currency, 'currencies': currencies})
+            for i in data_dict:
+                info_about_currency.update({i: data_dict.get(i).get(cur_id - 1)})
+
+            list_of_currencies.append(info_about_currency)
+
+        return render(request, 'show_currency.html', {'info': list_of_currencies, 'currencies': currencies})
