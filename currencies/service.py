@@ -2,6 +2,8 @@ import requests
 from bs4 import BeautifulSoup as bs
 import pandas as pd
 
+from .models import Currency
+
 
 def get_dict_of_currencies():
     """
@@ -33,43 +35,39 @@ def get_dict_of_currencies():
     return data.to_dict()
 
 
-def get_all_currencies(currencies):
+def get_currencies(request, is_all=False):
     data_dict = get_dict_of_currencies()
     list_of_currencies = []
 
-    for currency_id in range(len(currencies)):
-        info_about_currency = {}
-
-        for i in data_dict:
-            info_about_currency.update({i: data_dict.get(i).get(currency_id)})
-
-        list_of_currencies.append(info_about_currency)
-
-    return list_of_currencies
-
-
-def get_some_currencies(request):
-    data_dict = get_dict_of_currencies()
-
-    try:
-        currency_id = {}
-        currency_id.update(request.GET)  # getting all transmitted ids
-        list_of_currencies = []
-
-        # going through the entire list with ids
-        for cur_id in [int(i) for i in currency_id.get('id')]:
+    if is_all:
+        for currency_id in range(len(Currency.objects.all())):
             info_about_currency = {}
 
             for i in data_dict:
-                info_about_currency.update({i: data_dict.get(i).get(cur_id - 1)})
+                info_about_currency.update({i: data_dict.get(i).get(currency_id)})
 
             list_of_currencies.append(info_about_currency)
 
         return list_of_currencies
-    except TypeError:
-        return [{
-            'Цифр. код': data_dict.get('Цифр. код').get(0),
-            'Букв. код': data_dict.get('Букв. код').get(0),
-            'Единиц': data_dict.get('Единиц').get(0),
-            'Валюта': data_dict.get('Валюта').get(0),
-            'Курс': data_dict.get('Курс').get(0)}]
+    else:
+        try:
+            currency_id = {}
+            currency_id.update(request.GET)  # getting all transmitted ids
+
+            # going through the entire list with ids
+            for cur_id in [int(i) for i in currency_id.get('id')]:
+                info_about_currency = {}
+
+                for i in data_dict:
+                    info_about_currency.update({i: data_dict.get(i).get(cur_id - 1)})
+
+                list_of_currencies.append(info_about_currency)
+
+            return list_of_currencies
+        except TypeError:
+            return [{
+                'Цифр. код': data_dict.get('Цифр. код').get(0),
+                'Букв. код': data_dict.get('Букв. код').get(0),
+                'Единиц': data_dict.get('Единиц').get(0),
+                'Валюта': data_dict.get('Валюта').get(0),
+                'Курс': data_dict.get('Курс').get(0)}]

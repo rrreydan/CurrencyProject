@@ -24,53 +24,21 @@
 
     <hr>
 
-    {% if info_all %}
-
-        <table style="margin-left: auto; margin-right: auto; width: 60%;" rules="all">
-            <tr>
+    <table style="margin-left: auto; margin-right: auto; width: 60%" rules="all">
+        <tr>
             <td>Цифр. код</td>
             <td>Букв. код</td>
             <td>Единиц</td>
             <td>Валюта</td>
             <td>Курс</td>
-            </tr>
-
-            {% for currency in info_all %}
-
-                <tr>
-                {% for value in currency.values %}
-
-                    <td>{{ value }}</td>
-
-                {% endfor %}
-                </tr>
-
-            {% endfor %}
-        </table>
-
-    {% else %}
-
-        <table style="margin-left: auto; margin-right: auto; width: 60%" rules="all">
+        </tr>
+        {% for currency in info %}
             <tr>
-            <td>Цифр. код</td>
-            <td>Букв. код</td>
-            <td>Единиц</td>
-            <td>Валюта</td>
-            <td>Курс</td>
-            </tr>
-            {% for currency in info %}
-
-                <tr>
                 {% for value in currency.values %}
-
                     <td>{{ value }}</td>
-
                 {% endfor %}
-                </tr>
-
-            {% endfor %}
-        </table>
-
-    {% endif %}
+            </tr>
+        {% endfor %}
+    </table>
 </body>
 </html>

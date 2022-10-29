@@ -10,8 +10,8 @@ def show_currency(request):
     # Check whether the item with the withdrawal of all currencies is selected
     # if yes, then create a list and fill it with all currencies
     if request.GET.get('is_all'):
-        return render(request, 'show_currency.html', {'info_all': service.get_all_currencies(currencies),
+        return render(request, 'show_currency.html', {'info': service.get_currencies(request, True),
                                                       'currencies': currencies})
     else:
-        return render(request, 'show_currency.html', {'info': service.get_some_currencies(request),
+        return render(request, 'show_currency.html', {'info': service.get_currencies(request),
                                                       'currencies': currencies})
