@@ -1,7 +1,7 @@
 from . import service
 from .models import Currency
 
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 
 def show_currency(request):
@@ -15,3 +15,10 @@ def show_currency(request):
     else:
         return render(request, 'show_currency.html', {'info': service.get_currencies(request),
                                                       'currencies': currencies})
+
+
+def export_currency(request):
+    export_type = request.GET.get('export-type')
+    service.export(export_type)
+
+    return redirect('show_currency')

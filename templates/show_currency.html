@@ -40,5 +40,18 @@
             </tr>
         {% endfor %}
     </table>
+
+    <hr>
+
+    <form method="get" action="{% url 'export_currency' %}" style="text-align: center">
+        <label for="export">Экспортировать как...</label>
+        <select id="export" name="export-type">
+            <option value="excel">Excel</option>
+            <option value="csv">CSV</option>
+            <option value="pdf">PDF</option>
+        </select>
+
+        <input type="submit" value="Выбрать">
+    </form>
 </body>
 </html>
