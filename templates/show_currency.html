@@ -9,6 +9,9 @@
 </head>
 <body>
     <form action='{% url 'show_currency'%}' method="get" style="text-align: center">
+        <label for="start">Выберите дату:</label>
+        <input type="date" id="start" name="date">
+
         <label for="currency">Выберете валюту</label>
         <select id="currency" name="id" multiple>
             {% for currency in currencies %}

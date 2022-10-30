@@ -9,14 +9,17 @@ from .models import Currency
 last_list_of_currencies = []
 
 
-def get_dict_of_currencies():
+def get_dict_of_currencies(date):
     """
     Auxiliary function for obtaining a dictionary with currencies
     taken from the website of the Central Bank of the Russian Federation
 
     :return: dictionary with all currencies and their information
     """
-    request = requests.get("https://www.cbr.ru/currency_base/daily/")
+    # конвертирую дату с кнопки, чтобы засунуть её в ссылку на центробанк, кстати если в date ничего не передадут,
+    # то ссылка всё равно останется рабочей и кинет на сегодняшнюю дату
+    normal_date = '.'.join(date.split('-')[::-1])
+    request = requests.get(f"https://www.cbr.ru/currency_base/daily/?UniDbQuery.Posted=True&UniDbQuery.To={normal_date}")
 
     soup = bs(request.text, "html.parser")
     currencies_table = soup.find('tbody')
@@ -40,7 +43,7 @@ def get_dict_of_currencies():
 
 
 def get_currencies(request, is_all=False):
-    data_dict = get_dict_of_currencies()
+    data_dict = get_dict_of_currencies(request.GET.get('date', default=''))
     list_of_currencies = []
     global last_list_of_currencies
 
@@ -74,12 +77,9 @@ def get_currencies(request, is_all=False):
 
             return list_of_currencies
         except TypeError:
-            return [{
-                'Цифр. код': data_dict.get('Цифр. код').get(0),
-                'Букв. код': data_dict.get('Букв. код').get(0),
-                'Единиц': data_dict.get('Единиц').get(0),
-                'Валюта': data_dict.get('Валюта').get(0),
-                'Курс': data_dict.get('Курс').get(0)}]
+            last_list_of_currencies = get_currencies(request, True)
+
+            return get_currencies(request, True)
 
 
 def export(export_type):
