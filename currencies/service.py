@@ -16,8 +16,9 @@ def get_dict_of_currencies(date):
 
     :return: dictionary with all currencies and their information
     """
-    # конвертирую дату с кнопки, чтобы засунуть её в ссылку на центробанк, кстати если в date ничего не передадут,
-    # то ссылка всё равно останется рабочей и кинет на сегодняшнюю дату
+    # Converting a date from a button to put it in a link to the central bank,
+    # by the way, if nothing is transferred to date,
+    # then the link will still remain working and will throw on today's date
     normal_date = '.'.join(date.split('-')[::-1])
     request = requests.get(f"https://www.cbr.ru/currency_base/daily/?UniDbQuery.Posted=True&UniDbQuery.To={normal_date}")
 

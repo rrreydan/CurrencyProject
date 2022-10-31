@@ -12,7 +12,7 @@
         <label for="start">Выберите дату:</label>
         <input type="date" id="start" name="date">
 
-        <label for="currency">Выберете валюту</label>
+        <label for="currency">Выберете валюту:</label>
         <select id="currency" name="id" multiple>
             {% for currency in currencies %}
                 <option value="{{ currency.id }}">{{ currency.name }}</option>
