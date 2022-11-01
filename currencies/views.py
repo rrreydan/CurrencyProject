@@ -1,24 +1,25 @@
-from . import service
-from .models import Currency
+from datetime import datetime
 
-from django.shortcuts import render, redirect
+from . import service
+
+from django.shortcuts import render
 
 
 def show_currency(request):
-    currencies = Currency.objects.all()
+    currencies = {}
+
+    # Transfer to select only those currencies that existed at the time of the selected date
+    currencies.update(service.get_dict_of_currencies(request.GET.get('date', default='')).get('Валюта'))
 
     # Check whether the item with the withdrawal of all currencies is selected
     # if yes, then create a list and fill it with all currencies
     if request.GET.get('is_all'):
         return render(request, 'show_currency.html', {'info': service.get_currencies(request, True),
-                                                      'currencies': currencies})
+                                                      'currencies': currencies,
+                                                      'chosen_date': request.GET.get('date'),
+                                                      'date_now': str(datetime.now())[:10]})
     else:
         return render(request, 'show_currency.html', {'info': service.get_currencies(request),
-                                                      'currencies': currencies})
-
-
-def export_currency(request):
-    export_type = request.GET.get('export-type')
-    service.export(export_type)
-
-    return redirect('show_currency')
+                                                      'currencies': currencies,
+                                                      'chosen_date': request.GET.get('date'),
+                                                      'date_now': str(datetime.now())[:10]})

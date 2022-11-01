@@ -286,4 +286,7 @@ fabric.properties
 # https://plugins.jetbrains.com/plugin/8053-azure-toolkit-for-intellij
 .idea/**/azureSettings.xml
 
+# Folder with files to export
+static/files
+
 # End of https://www.toptal.com/developers/gitignore/api/django,pycharm

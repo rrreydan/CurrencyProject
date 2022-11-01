@@ -1,12 +1,7 @@
 import requests
 from bs4 import BeautifulSoup as bs
 import pandas as pd
-import matplotlib.pyplot as plt
-from matplotlib.backends.backend_pdf import PdfPages
-
-from .models import Currency
-
-last_list_of_currencies = []
+import aspose.words as aw
 
 
 def get_dict_of_currencies(date):
@@ -44,12 +39,18 @@ def get_dict_of_currencies(date):
 
 
 def get_currencies(request, is_all=False):
+    """
+    A function for obtaining the necessary currencies for further use in the template
+
+    :param request: request received from the form in the template
+    :param is_all: A form parameter that says whether to output all currencies
+    :return: list of selected currencies
+    """
     data_dict = get_dict_of_currencies(request.GET.get('date', default=''))
     list_of_currencies = []
-    global last_list_of_currencies
 
     if is_all:
-        for currency_id in range(len(Currency.objects.all())):
+        for currency_id in range(len(data_dict.get('Валюта'))):
             info_about_currency = {}
 
             for i in data_dict:
@@ -57,7 +58,7 @@ def get_currencies(request, is_all=False):
 
             list_of_currencies.append(info_about_currency)
 
-            last_list_of_currencies = list_of_currencies
+            create_export_files(list_of_currencies)
 
         return list_of_currencies
     else:
@@ -70,61 +71,28 @@ def get_currencies(request, is_all=False):
                 info_about_currency = {}
 
                 for i in data_dict:
-                    info_about_currency.update({i: data_dict.get(i).get(cur_id - 1)})
+                    info_about_currency.update({i: data_dict.get(i).get(cur_id)})
 
                 list_of_currencies.append(info_about_currency)
 
-            last_list_of_currencies = list_of_currencies
+            create_export_files(list_of_currencies)
 
             return list_of_currencies
         except TypeError:
-            last_list_of_currencies = get_currencies(request, True)
+            create_export_files(get_currencies(request, True))
 
             return get_currencies(request, True)
 
 
-def export(export_type):
-    df = pd.DataFrame(last_list_of_currencies)
+def create_export_files(list_of_currencies):
+    """
+    Function for creating files (Excel, CSV and PDF) for their further export
 
-    if export_type == 'excel':
-        df.to_excel('currencies.xlsx')
-    elif export_type == 'csv':
-        df.to_csv('currencies.csv')
-    elif export_type == 'pdf':
-        dataframe_to_pdf(df, 'currencies.pdf')
+    :param list_of_currencies: List of selected currencies
+    """
+    pd.DataFrame(list_of_currencies).to_excel('static/files/currencies.xlsx')
+    pd.DataFrame(list_of_currencies).to_csv('static/files/currencies.csv')
 
-
-def _draw_as_table(df, pagesize):
-    alternating_colors = [['white'] * len(df.columns), ['lightgray'] * len(df.columns)] * len(df)
-    alternating_colors = alternating_colors[:len(df)]
-    fig, ax = plt.subplots(figsize=pagesize)
-    ax.axis('tight')
-    ax.axis('off')
-    the_table = ax.table(cellText=df.values,
-                         rowLabels=df.index,
-                         colLabels=df.columns,
-                         rowColours=['lightblue'] * len(df),
-                         colColours=['lightblue'] * len(df.columns),
-                         cellColours=alternating_colors,
-                         loc='center')
-    return fig
-
-
-def dataframe_to_pdf(df, filename, numpages=(1, 1), pagesize=(11, 8.5)):
-    with PdfPages(filename) as pdf:
-        nh, nv = numpages
-        rows_per_page = len(df) // nh
-        cols_per_page = len(df.columns) // nv
-        for i in range(0, nh):
-            for j in range(0, nv):
-                page = df.iloc[(i * rows_per_page):min((i + 1) * rows_per_page, len(df)),
-                               (j * cols_per_page):min((j + 1) * cols_per_page, len(df.columns))]
-                fig = _draw_as_table(page, pagesize)
-                if nh > 1 or nv > 1:
-                    # Add a part/page number at bottom-center of page
-                    fig.text(0.5, 0.5 / pagesize[0],
-                             "Part-{}x{}: Page-{}".format(i + 1, j + 1, i * nv + j + 1),
-                             ha='center', fontsize=8)
-                pdf.savefig(fig, bbox_inches='tight')
-
-                plt.close()
+    pd.DataFrame(list_of_currencies).to_markdown('static/files/currencies.md')
+    doc = aw.Document('static/files/currencies.md')
+    doc.save('static/files/currencies.pdf')
