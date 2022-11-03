@@ -92,7 +92,3 @@ def create_export_files(list_of_currencies):
     """
     pd.DataFrame(list_of_currencies).to_excel('static/files/currencies.xlsx')
     pd.DataFrame(list_of_currencies).to_csv('static/files/currencies.csv')
-
-    pd.DataFrame(list_of_currencies).to_markdown('static/files/currencies.md')
-    doc = aw.Document('static/files/currencies.md')
-    doc.save('static/files/currencies.pdf')

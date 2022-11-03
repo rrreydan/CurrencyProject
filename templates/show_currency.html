@@ -13,7 +13,7 @@
 </head>
 <body>
     <div class="container-fluid">
-            <form class="row align-items-top justify-content-center" action='{% url 'show_currency'%}' method="get">
+            <form class="row align-items-top justify-content-center" action='{% url 'show_currency'%}' method="get" id="form">
                 <div class="col-1 m-auto">
                     <img src="{% static 'img/logo.png' %}" alt="logo">
                 </div>
@@ -22,12 +22,13 @@
                     <label for="start">Выберите дату:</label>
                     <input class="form-control" type="date" id="start" name="date"
                            value={% if chosen_date is None %}
-                                      {{ date_now }}
-                                  {% else %}
-                                      {{ chosen_date }}
-                                  {% endif %}
+                               {{ date_now }}
+                           {% else %}
+                               {{ chosen_date }}
+                           {% endif %}
                            min="1992-07-01"
-                           max="{{ date_now }}">
+                           max="{{ date_now }}"
+                           onchange="submit_form()">
 
                     <br>
 
@@ -36,14 +37,13 @@
 
                 <div class="col">
                     <label for="currency">Выберете валюту:</label>
-                    <select class="form-select" id="currency" name="id" multiple>
+                    <select class="selectpicker" id="currency" name="id" multiple size="3">
                         {% for id, name in currencies.items %}
                             <option value="{{ id }}">{{ name }}</option>
                         {% endfor %}
                     </select>
 
-                    <input class="form-check-input" type="checkbox" name="is_all" id="all_checkbox">
-                    <label class="form-check-label" for="all_checkbox">Показать все валюты</label>
+                    <small class="form-text text-muted">Если ни одна из валют не выбрана, то выводятся все</small>
                 </div>
             </form>
     </div>
@@ -78,7 +78,8 @@
     <div class="download-links">
         <a class="btn btn-success" href="http://localhost:8000/static/files/currencies.xlsx">Сохранить в Excel</a>
         <a class="btn btn-success" href="http://localhost:8000/static/files/currencies.csv">Сохранить в CSV</a>
-        <a class="btn btn-success" href="http://localhost:8000/static/files/currencies.pdf">Сохранить в PDF</a>
     </div>
+
+    <script src="{% static 'script/script.js' %}"></script>
 </body>
 </html>

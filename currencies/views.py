@@ -11,15 +11,7 @@ def show_currency(request):
     # Transfer to select only those currencies that existed at the time of the selected date
     currencies.update(service.get_dict_of_currencies(request.GET.get('date', default='')).get('Валюта'))
 
-    # Check whether the item with the withdrawal of all currencies is selected
-    # if yes, then create a list and fill it with all currencies
-    if request.GET.get('is_all'):
-        return render(request, 'show_currency.html', {'info': service.get_currencies(request, True),
-                                                      'currencies': currencies,
-                                                      'chosen_date': request.GET.get('date'),
-                                                      'date_now': str(datetime.now())[:10]})
-    else:
-        return render(request, 'show_currency.html', {'info': service.get_currencies(request),
-                                                      'currencies': currencies,
-                                                      'chosen_date': request.GET.get('date'),
-                                                      'date_now': str(datetime.now())[:10]})
+    return render(request, 'show_currency.html', {'info': service.get_currencies(request),
+                                                  'currencies': currencies,
+                                                  'chosen_date': request.GET.get('date'),
+                                                  'date_now': str(datetime.now())[:10]})
