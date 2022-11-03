@@ -10,6 +10,7 @@
     <link type="image/png" sizes="16x16" rel="icon" href="{% static 'img/ico.png' %}">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.css" />
 </head>
 <body>
     <div class="container-fluid">
@@ -18,7 +19,7 @@
                     <img src="{% static 'img/logo.png' %}" alt="logo">
                 </div>
 
-                <div class="col">
+                <div class="col-sm-2">
                     <label for="start">Выберите дату:</label>
                     <input class="form-control" type="date" id="start" name="date"
                            value={% if chosen_date is None %}
@@ -36,13 +37,15 @@
                 </div>
 
                 <div class="col">
-                    <label for="currency">Выберете валюту:</label>
-                    <select class="selectpicker" id="currency" name="id" multiple size="3">
+                    <label for="currency">Выберете валюты:</label>
+                    <br>
+                    <select class="selectpicker" multiple data-live-search="true" title="Все" id="currency"
+                            name="id" data-width="auto">
                         {% for id, name in currencies.items %}
                             <option value="{{ id }}">{{ name }}</option>
                         {% endfor %}
                     </select>
-
+                    <br>
                     <small class="form-text text-muted">Если ни одна из валют не выбрана, то выводятся все</small>
                 </div>
             </form>
@@ -81,5 +84,8 @@
     </div>
 
     <script src="{% static 'script/script.js' %}"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>
 </body>
 </html>
