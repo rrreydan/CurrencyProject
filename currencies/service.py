@@ -1,7 +1,7 @@
 import requests
 from bs4 import BeautifulSoup as bs
 import pandas as pd
-import aspose.words as aw
+from datetime import datetime
 
 
 def get_dict_of_currencies(date):
@@ -18,22 +18,14 @@ def get_dict_of_currencies(date):
     request = requests.get(f"https://www.cbr.ru/currency_base/daily/?UniDbQuery.Posted=True&UniDbQuery.To={normal_date}")
 
     soup = bs(request.text, "html.parser")
-    currencies_table = soup.find('tbody')
-    headers = []
+    td = [i.text for i in soup.findAll('td')]
+    info = []
 
-    # getting all the column names
-    for i in currencies_table.find_all('th'):
-        title = i.text
-        headers.append(title)
+    for i in range(0, len(td), 5):
+        info.append([td[i], td[i + 1], td[i + 2], td[i + 3], td[i + 4]])
 
-    data = pd.DataFrame(columns=headers)
-
-    # getting all the information from the table
-    for i in currencies_table.find_all('tr')[1:]:
-        row_data = i.find_all('td')
-        row = [i.text for i in row_data]
-        length = len(data)
-        data.loc[length] = row
+    data = pd.DataFrame(info, columns=['Цифр. код', 'Букв. код', 'Единиц', 'Валюта', 'Курс'])
+    data['Дата'] = [normal_date for _ in data.get('Валюта')]  # Adding a date to a DataFrame
 
     return data.to_dict()
 
@@ -46,7 +38,7 @@ def get_currencies(request, is_all=False):
     :param is_all: A form parameter that says whether to output all currencies
     :return: list of selected currencies
     """
-    data_dict = get_dict_of_currencies(request.GET.get('date', default=''))
+    data_dict = get_dict_of_currencies(request.POST.get('date', default=str(datetime.now())[:10]))
     list_of_currencies = []
 
     if is_all:
@@ -62,9 +54,9 @@ def get_currencies(request, is_all=False):
 
         return list_of_currencies
     else:
-        try:
+        if request.POST.get('id'):
             currency_id = {}
-            currency_id.update(request.GET)  # getting all transmitted ids
+            currency_id.update(request.POST)  # getting all transmitted ids
 
             # going through the entire list with ids
             for cur_id in [int(i) for i in currency_id.get('id')]:
@@ -78,7 +70,7 @@ def get_currencies(request, is_all=False):
             create_export_files(list_of_currencies)
 
             return list_of_currencies
-        except TypeError:
+        else:
             create_export_files(get_currencies(request, True))
 
             return get_currencies(request, True)
@@ -90,5 +82,5 @@ def create_export_files(list_of_currencies):
 
     :param list_of_currencies: List of selected currencies
     """
-    pd.DataFrame(list_of_currencies).to_excel('static/files/currencies.xlsx')
-    pd.DataFrame(list_of_currencies).to_csv('static/files/currencies.csv')
+    pd.DataFrame(list_of_currencies).to_excel('static/files/currencies.xlsx', index=False)
+    pd.DataFrame(list_of_currencies).to_csv('static/files/currencies.csv', index=False)

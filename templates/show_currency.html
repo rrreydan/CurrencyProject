@@ -14,7 +14,8 @@
 </head>
 <body>
     <div class="container-fluid">
-            <form class="row align-items-top justify-content-center" action='{% url 'show_currency'%}' method="get" id="form">
+            <form class="row align-items-top justify-content-center" action='{% url 'show_currency'%}' method="post" id="form">
+                {% csrf_token %}
                 <div class="col-1 m-auto">
                     <img src="{% static 'img/logo.png' %}" alt="logo">
                 </div>
@@ -61,6 +62,7 @@
                 <th scope="col">Единиц</th>
                 <th scope="col">Валюта</th>
                 <th scope="col">Курс</th>
+                <th scope="col">Дата</th>
             </tr>
         </thead>
         <tbody class="table-group-divider">
